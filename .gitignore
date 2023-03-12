@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### CUSTOM ###
+/src/main/resources/profile/
+/src/main/resources/static/
+/src/main/resources/*.yml
