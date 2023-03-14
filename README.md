@@ -11,7 +11,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 impati�
 
 ## 흐름
 
-<img src="src/main/resources/static/seq.png" width="700">
+<img src="docs/seq.png" width="700">
 
 - client-server 는 redirectUrl과 함께 로그인 요청을 위임한다.
 - customer-server 는 로그인에 성공한 사용자에 대해 redirectAttribute 에 엑세스 토큰을 발급받을 수 있는 인가 토큰을 발급한다.
