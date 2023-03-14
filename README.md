@@ -30,6 +30,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 impati�
 * Thymeleaf
 * Spring Security
 * MySQL Driver
+* JJWT
 
 ---
 
@@ -39,8 +40,9 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 impati�
 
 - SSO 로그인 지원 (google, Kakao , Naver ,Keycloak)
 
-    GET /auth/login?redirectUrl=${REDIRECT_URL}}
-    HOST : service-hub.org
+  GET /auth/login?redirectUrl=${REDIRECT_URL}}
+
+  HOST : service-hub.org
 
 #### 회원가입 기능
 
