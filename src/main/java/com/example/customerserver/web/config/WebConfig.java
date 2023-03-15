@@ -2,6 +2,7 @@ package com.example.customerserver.web.config;
 
 import com.example.customerserver.web.argument.AccessTokenArgumentResolver;
 import com.example.customerserver.web.argument.CodeArgumentResolver;
+import com.example.customerserver.web.argument.SimplePrincipalArgumentResolver;
 import com.example.customerserver.web.token.AccessTokenGenerator;
 import com.example.customerserver.web.token.CodeGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new CodeArgumentResolver(codeGenerator));
         resolvers.add(new AccessTokenArgumentResolver(codeGenerator, accessTokenGenerator, objectMapper));
+        resolvers.add(new SimplePrincipalArgumentResolver(accessTokenGenerator, objectMapper));
 
     }
 }
