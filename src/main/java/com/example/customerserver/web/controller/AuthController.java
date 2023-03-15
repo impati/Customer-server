@@ -1,6 +1,7 @@
 package com.example.customerserver.web.controller;
 
 import com.example.customerserver.web.request.CodeRequest;
+import com.example.customerserver.web.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
+    @ResponseBody
+    @PostMapping("/gettoken")
+    public TokenResponse returnToken(TokenResponse tokenResponse) {
+        return tokenResponse;
+    }
 
     @PostMapping("/code")
     public String redirectWithCode(@CookieValue("redirectUrl") String redirectUrl,
