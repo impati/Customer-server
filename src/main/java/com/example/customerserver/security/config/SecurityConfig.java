@@ -1,10 +1,10 @@
 package com.example.customerserver.security.config;
 
 import com.example.customerserver.repository.CustomerRepository;
+import com.example.customerserver.security.filter.CodeValidationFilter;
 import com.example.customerserver.security.oauth2.OAuth2CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 public class SecurityConfig {
 
     private final CustomerRepository customerRepository;
-
+    private final CodeValidationFilter codeValidationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -27,6 +27,8 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests()
                 .anyRequest().permitAll();
 
+        httpSecurity.addFilterAt(codeValidationFilter, AnonymousAuthenticationFilter.class);
+
         httpSecurity
                 .oauth2Login()
                 .loginPage("/login")
@@ -37,7 +39,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2CustomerService customOAuth2UserService(){
+    public OAuth2CustomerService customOAuth2UserService() {
         return new OAuth2CustomerService(customerRepository);
     }
 
