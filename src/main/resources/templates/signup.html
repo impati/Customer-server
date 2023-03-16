@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <link href="service-hub.png" rel="shortcut icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+
+    <!-- FontAwesome JS -->
+    <script defer src="/assets/fontawesome/js/all.js"></script>
+
+    <!-- Theme CSS -->
+    <link href="/assets/css/theme-1.css" id="theme-style" rel="stylesheet">
+    <title>SB Admin 2 - Register</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<style>
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+</style>
+
+<body class="">
+
+<div class="container"
+     style="width: 60%;display: flex;flex-direction: column;align-items: center;justify-content: center">
+
+    <div class="card shadow-lg my-5"
+         style="width: 50%;display: flex;flex-direction: column;align-items: center;justify-content: center">
+        <div class="card-body" style="width: 100%;">
+            <!-- Nested Row within Card Body -->
+            <div class=" text-center ">
+                <div class="col text-center">
+
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                    </div>
+                    <form class="user" method="post" th:action="@{/auth/signup}" th:object="${signupRequest}">
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <input class="form-control form-control-user" id="exampleFirstName" name="username"
+                                       placeholder="First Name" th:field="*{username}"
+                                       type="text">
+                                <small class="field-error" th:errors="*{username}"></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-user" id="exampleInputEmail" name="email"
+                                   placeholder="Email Address"
+                                   th:field="*{email}"
+                                   type="email">
+                            <small class="field-error" th:errors="*{email}"></small>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input class="form-control form-control-user" id="exampleInputPassword"
+                                       name="password" placeholder="Password" th:field="*{password}"
+                                       type="password">
+
+                                <small class="field-error" th:errors="*{password}"></small>
+                            </div>
+                            <div class="col-sm-6">
+                                <input class="form-control form-control-user" id="exampleRepeatPassword"
+                                       name="repeatPassword" placeholder="Repeat Password" th:field="*{repeatPassword}"
+                                       type="password">
+                                <small class="field-error" th:errors="*{repeatPassword}"></small>
+                            </div>
+                            <small class="form-text text-muted pt-1"><i
+                                    class="fas fa-info-circle me-2 text-primary"></i>비밀번호는 8자 이상이어야 하며, 숫자/대문자/소문자/특수문자를
+                                모두 포함해야 합니다.</small>
+                        </div>
+                        <button class="btn btn-primary btn-user btn-block" type="submit">
+                            Register Account
+                        </button>
+
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <a class="small" th:href="@{/auth/login}">Already have an account? Login!</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- *****CONFIGURE STYLE (REMOVE ON YOUR PRODUCTION SITE)****** -->
+<div class="config-panel config-panel-hide d-none d-lg-block" id="config-panel">
+    <div class="panel-inner">
+        <a class="config-trigger text-center" href="#" id="config-trigger"><i class="fas fa-cog mx-auto"
+                                                                              data-fa-transform="down-6"></i></a>
+        <h5 class="panel-title">Choose Colour</h5>
+        <ul class="list-inline mb-0" id="color-options">
+            <li class="theme-1 active list-inline-item"><a data-style="/assets/css/theme-1.css" href="#"></a></li>
+            <li class="theme-2  list-inline-item"><a data-style="/assets/css/theme-2.css" href="#"></a></li>
+            <li class="theme-3  list-inline-item"><a data-style="/assets/css/theme-3.css" href="#"></a></li>
+            <li class="theme-4  list-inline-item"><a data-style="/assets/css/theme-4.css" href="#"></a></li>
+            <li class="theme-5  list-inline-item"><a data-style="/assets/css/theme-5.css" href="#"></a></li>
+            <li class="theme-6  list-inline-item"><a data-style="/assets/css/theme-6.css" href="#"></a></li>
+            <li class="theme-7  list-inline-item"><a data-style="/assets/css/theme-7.css" href="#"></a></li>
+            <li class="theme-8  list-inline-item"><a data-style="/assets/css/theme-8.css" href="#"></a></li>
+            <li class="theme-9  list-inline-item"><a data-style="/assets/css/theme-9.css" href="#"></a></li>
+            <li class="theme-10  list-inline-item"><a data-style="/assets/css/theme-10.css" href="#"></a></li>
+        </ul>
+        <a class="close" href="#" id="config-close"><i class="fa fa-times-circle"></i></a>
+    </div><!--//panel-inner-->
+</div><!--//configure-panel-->
+
+<!-- Javascript -->
+<script src="/js/jquery.min.js"></script>
+<script src="/assets/plugins/popper.min.js"></script>
+<script src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Dark Mode -->
+<script src="/assets/plugins/js-cookie.min.js"></script>
+<script src="/assets/js/dark-mode.js"></script>
+
+<!-- Style Switcher (REMOVE ON YOUR PRODUCTION SITE) -->
+<script src="/assets/js/demo/style-switcher.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
