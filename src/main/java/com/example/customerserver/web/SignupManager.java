@@ -59,9 +59,9 @@ public class SignupManager {
     }
 
     private KeycloakSignupForm signUpFormMapping(SignupRequest signupRequest) {
-        return new KeycloakSignupForm(signupRequest.username(),
-                signupRequest.email(),
-                signupRequest.password());
+        return new KeycloakSignupForm(signupRequest.getUsername(),
+                signupRequest.getEmail(),
+                signupRequest.getPassword());
     }
 
     @Data

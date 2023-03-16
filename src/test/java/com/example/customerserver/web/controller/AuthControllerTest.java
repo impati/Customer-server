@@ -41,14 +41,15 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private CustomerRepository customerRepository;
-
+    @Autowired
+    private AuthController authController;
     private String redirectUrl;
 
     @BeforeEach
     void setUp() {
         redirectUrl = "https://service-hub.org";
         mockMvc = MockMvcBuilders
-                .standaloneSetup(AuthController.class)
+                .standaloneSetup(authController)
                 .setCustomArgumentResolvers(new CodeArgumentResolver(codeGenerator))
                 .setCustomArgumentResolvers(new AccessTokenArgumentResolver(codeGenerator, accessTokenGenerator, objectMapper))
                 .addFilter(codeValidationFilter)
@@ -73,7 +74,7 @@ class AuthControllerTest {
     @DisplayName("code 와 함께 redirect 테스트")
     @WithMockCustomCustomer
     public void redirectWithCodeTest() throws Exception {
-        mockMvc.perform(post("/auth/code")
+        mockMvc.perform(get("/auth/code")
                         .cookie(new Cookie("redirectUrl", redirectUrl)))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:" + redirectUrl))

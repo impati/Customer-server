@@ -30,43 +30,38 @@ public class AuthController {
         return tokenResponse;
     }
 
-    @PostMapping("/code")
-    public String redirectWithCode(@CookieValue("redirectUrl") String redirectUrl,
-                                   CodeRequest codeRequest,
-                                   RedirectAttributes redirectAttributes) {
+    @GetMapping("/code")
+    public String redirectWithCode(@CookieValue("redirectUrl") String redirectUrl, CodeRequest codeRequest, RedirectAttributes redirectAttributes) {
         redirectAttributes.addAttribute("code", codeRequest.code());
         return "redirect:" + redirectUrl;
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam String redirectUrl,
-                        HttpServletResponse response,
-                        Model model) {
+    public String login(@RequestParam String redirectUrl, HttpServletResponse response,
+                        @RequestParam(required = false) Boolean error, Model model) {
         response.addCookie(new Cookie("redirectUrl", redirectUrl));
-        model.addAttribute("error", false); // TODO : keycloak 로그인이 실패할 경우 대응
+        model.addAttribute("error", error);
         return "signin";
     }
 
     @GetMapping("/signup")
-    public String signup(@ModelAttribute SignupRequest signupRequest, Model model) {
+    public String signup(@RequestParam String redirectUrl,
+                         @ModelAttribute SignupRequest signupRequest,
+                         HttpServletResponse response, Model model) {
+        response.addCookie(new Cookie("redirectUrl", redirectUrl));
         model.addAttribute("signupRequest", signupRequest);
         return "signup";
     }
 
-
     @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute SignupRequest signupRequest, BindingResult bindingResult) {
-
+    public String signup(@Valid @ModelAttribute SignupRequest signupRequest, BindingResult bindingResult,
+                         @CookieValue("redirectUrl") String redirectUrl) {
         signupRequest.validPassword();
-
         if (bindingResult.hasErrors()) {
             return "signup";
         }
-
         signupManager.signup(signupRequest);
-
-        return "redirect:/auth/login";
+        return "redirect:/auth/login?redirectUrl=" + redirectUrl;
     }
-
 
 }

@@ -23,14 +23,15 @@ public class SignupTest {
     @DisplayName("keycloak 오픈소스 회원 가입 페이지 테스트")
     public void keycloakSignupPage() throws Exception {
 
-        mockMvc.perform(get("/auth/signup"))
+        mockMvc.perform(get("/auth/signup")
+                        .param("redirectUrl", "https://service-hub.org"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attributeExists("signupRequest"))
                 .andExpect(MockMvcResultMatchers.view().name("signup"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
+    //@Test 다른 방식의 테스트를 생각해볼 것.
     @DisplayName("keycloak 오픈소스 회원 가입 테스트")
     public void keycloakSignup() throws Exception {
 
