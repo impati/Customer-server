@@ -1,6 +1,7 @@
 package com.example.customerserver.security.config;
 
 import com.example.customerserver.repository.CustomerRepository;
+import com.example.customerserver.security.filter.ClientIdValidationFilter;
 import com.example.customerserver.security.filter.CodeValidationFilter;
 import com.example.customerserver.security.filter.KeycloakLoginFilter;
 import com.example.customerserver.security.handler.KeycloakLoginFailureHandler;
@@ -37,6 +38,7 @@ public class SecurityConfig {
     private final OAuth2AuthorizedClientRepository authorizedClientRepository;
     private final CustomerRepository customerRepository;
     private final CodeValidationFilter codeValidationFilter;
+    private final ClientIdValidationFilter clientIdValidationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -50,6 +52,7 @@ public class SecurityConfig {
 
         httpSecurity.addFilterAt(codeValidationFilter, AnonymousAuthenticationFilter.class);
         httpSecurity.addFilterAfter(keycloakLoginFilter(), AnonymousAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(clientIdValidationFilter, AnonymousAuthenticationFilter.class);
 
         httpSecurity
                 .oauth2Login()
