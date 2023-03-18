@@ -1,5 +1,8 @@
 package com.example.customerserver.web.controller;
 
+import com.example.customerserver.service.ClientAdminister;
+import com.example.customerserver.service.ClientSteps;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,31 +22,43 @@ public class SignupTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ClientAdminister clientAdminister;
+
+    private ClientSteps clientSteps;
+
+    @BeforeEach
+    void setUp() {
+        clientSteps = new ClientSteps(clientAdminister);
+    }
+
     @Test
     @DisplayName("keycloak 오픈소스 회원 가입 페이지 테스트")
     public void keycloakSignupPage() throws Exception {
 
-        mockMvc.perform(get("/auth/signup")
-                        .param("redirectUrl", "https://service-hub.org"))
+        //then
+        String clientId = clientSteps.clientRegisterWithDefaultStep();
+
+        mockMvc.perform(get("/signup")
+                        .header("clientId", clientId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attributeExists("signupRequest"))
                 .andExpect(MockMvcResultMatchers.view().name("signup"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    //@Test 다른 방식의 테스트를 생각해볼 것.
+    //@Test  TODO : 다른 방법으로 테스트를 수행
     @DisplayName("keycloak 오픈소스 회원 가입 테스트")
     public void keycloakSignup() throws Exception {
 
         mockMvc.perform(
-                        post("/auth/signup")
+                        post("/signup")
                                 .param("username", "tester")
                                 .param("email", "yongs170@naver.com")
                                 .param("password", "test!234523@")
                                 .param("repeatPassword", "test!234523@")
                 )
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("redirect:/auth/login"))
+                .andExpect(MockMvcResultMatchers.view().name("forward:/auth/login"))
                 .andDo(MockMvcResultHandlers.print());
 
     }
