@@ -3,7 +3,10 @@ package com.example.customerserver.web.controller;
 import com.example.customerserver.domain.Customer;
 import com.example.customerserver.domain.ProviderType;
 import com.example.customerserver.repository.CustomerRepository;
+import com.example.customerserver.security.filter.ClientIdValidationFilter;
 import com.example.customerserver.security.filter.CodeValidationFilter;
+import com.example.customerserver.service.ClientAdminister;
+import com.example.customerserver.service.ClientSteps;
 import com.example.customerserver.web.WithMockCustomCustomer;
 import com.example.customerserver.web.argument.AccessTokenArgumentResolver;
 import com.example.customerserver.web.argument.CodeArgumentResolver;
@@ -43,16 +46,26 @@ class AuthControllerTest {
     private CustomerRepository customerRepository;
     @Autowired
     private AuthController authController;
+    @Autowired
+    private ClientIdValidationFilter clientIdValidationFilter;
+
+    @Autowired
+    private ClientAdminister clientAdminister;
+
+    private ClientSteps clientSteps;
     private String redirectUrl;
+
 
     @BeforeEach
     void setUp() {
+        clientSteps = new ClientSteps(clientAdminister);
         redirectUrl = "https://service-hub.org";
         mockMvc = MockMvcBuilders
                 .standaloneSetup(authController)
                 .setCustomArgumentResolvers(new CodeArgumentResolver(codeGenerator))
                 .setCustomArgumentResolvers(new AccessTokenArgumentResolver(codeGenerator, accessTokenGenerator, objectMapper))
                 .addFilter(codeValidationFilter)
+                .addFilter(clientIdValidationFilter)
                 .build();
     }
 
@@ -61,8 +74,13 @@ class AuthControllerTest {
     @WithMockCustomCustomer
     public void loginTest() throws Exception {
 
+        //given
+        String clientId = clientSteps.clientRegisterWithDefaultStep();
+
+        //then
         mockMvc.perform(get("/auth/login")
-                        .param("redirectUrl", redirectUrl))
+                        .header("clientId", clientId)
+                )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("signin"))
                 .andExpect(MockMvcResultMatchers.cookie().exists("redirectUrl"))
@@ -86,11 +104,15 @@ class AuthControllerTest {
     @WithMockCustomCustomer
     public void validCodeAnd() throws Exception {
 
+        //given
         Customer customer = saveCustomer();
-
         String code = codeGenerator.createToken(String.valueOf(customer.getId()));
+        String clientId = clientSteps.clientRegisterWithDefaultStep();
 
-        mockMvc.perform(post("/auth/gettoken").header("Authorization", code))
+        //then
+        mockMvc.perform(post("/auth/gettoken")
+                        .header("Authorization", code)
+                        .header("clientId", clientId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.accessToken").exists())
                 .andDo(MockMvcResultHandlers.print());

@@ -1,28 +1,16 @@
 package com.example.customerserver.web.controller;
 
-import com.example.customerserver.web.SignupManager;
 import com.example.customerserver.web.request.CodeRequest;
-import com.example.customerserver.web.request.SignupRequest;
 import com.example.customerserver.web.response.TokenResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 @Slf4j
 @Controller
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
-
-    private final SignupManager signupManager;
 
     @ResponseBody
     @PostMapping("/gettoken")
@@ -36,32 +24,9 @@ public class AuthController {
         return "redirect:" + redirectUrl;
     }
 
-    @GetMapping("/login")
-    public String login(@RequestParam String redirectUrl, HttpServletResponse response,
-                        @RequestParam(required = false) Boolean error, Model model) {
-        response.addCookie(new Cookie("redirectUrl", redirectUrl));
-        model.addAttribute("error", error);
+    @RequestMapping(path = "/login", method = {RequestMethod.GET, RequestMethod.POST})
+    public String login() {
         return "signin";
-    }
-
-    @GetMapping("/signup")
-    public String signup(@RequestParam String redirectUrl,
-                         @ModelAttribute SignupRequest signupRequest,
-                         HttpServletResponse response, Model model) {
-        response.addCookie(new Cookie("redirectUrl", redirectUrl));
-        model.addAttribute("signupRequest", signupRequest);
-        return "signup";
-    }
-
-    @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute SignupRequest signupRequest, BindingResult bindingResult,
-                         @CookieValue("redirectUrl") String redirectUrl) {
-        signupRequest.validPassword();
-        if (bindingResult.hasErrors()) {
-            return "signup";
-        }
-        signupManager.signup(signupRequest);
-        return "redirect:/auth/login?redirectUrl=" + redirectUrl;
     }
 
 }
