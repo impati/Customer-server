@@ -1,5 +1,6 @@
 package com.example.customerserver.web.controller;
 
+import com.example.customerserver.config.AppConfig;
 import com.example.customerserver.domain.Client;
 import com.example.customerserver.repository.ClientRepository;
 import com.example.customerserver.web.request.ClientRedirectUrlRequest;
@@ -18,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("Client TEST")
 @SpringBootTest
@@ -37,7 +38,7 @@ class ClientControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("Client 등록 테스트")
+    @DisplayName("[POST] [/client/register] Client 등록 테스트")
     public void registerClientTest() throws Exception {
 
         mockMvc.perform(post("/client/register")
@@ -52,7 +53,7 @@ class ClientControllerTest {
     }
 
     @Test
-    @DisplayName("Client Redirect Edit 테스트")
+    @DisplayName("[POST] [client/edit-redirect] Client Redirect Edit 테스트")
     @Transactional
     public void editClientRedirect() throws Exception {
 
@@ -67,6 +68,28 @@ class ClientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new ClientRedirectUrlRequest(clientId, "https://naver.com"))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[POST] [client/edit-redirect] Client Redirect Edit 테스트 시 유효하지 않는 client Id 가 넘어온 경우")
+    public void invalidClientIdWhenEditingRedirect() throws Exception {
+        // given
+        String clientId = UUID.randomUUID().toString();
+        // when
+        // then
+        mockMvc.perform(post("/client/edit-redirect")
+                        .header("clientId", clientId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new ClientRedirectUrlRequest(clientId, "https://naver.com"))))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(AppConfig.getHost() + "/error/client"));
+
+        mockMvc.perform(get("/error/client"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.codeName").value("C001"))
+                .andExpect(jsonPath("$.message").value("클라이언트 ID 가 유효하지 않습니다."))
+                .andExpect(jsonPath("$.solution").value("클라이언트를 등록하여 ID를 발급 받아야합니다."));
+
     }
 
 }

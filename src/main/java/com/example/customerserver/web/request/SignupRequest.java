@@ -21,8 +21,7 @@ public class SignupRequest {
     @NotBlank
     private String repeatPassword;
 
-    public void validPassword() {
-        if (!password.equals(repeatPassword))
-            throw new IllegalStateException();
+    public boolean isSamePassword() {
+        return password.equals(repeatPassword);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.customerserver.web.argument;
 
+import com.example.customerserver.exception.UnAuthenticationException;
 import com.example.customerserver.security.CustomerPrincipal;
 import com.example.customerserver.web.request.CodeRequest;
-import com.example.customerserver.web.token.CodeGenerator;
 import com.example.customerserver.web.token.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -30,9 +30,14 @@ public class CodeArgumentResolver implements HandlerMethodArgumentResolver {
         return new CodeRequest(code);
     }
 
-    private CustomerPrincipal currentPrincipal(){
+    private CustomerPrincipal currentPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null) throw new IllegalStateException("인증되지 않은 ... ");
+        if (authentication == null) throw new UnAuthenticationException();
+        if (!isPossibleCasting(authentication.getPrincipal())) throw new UnAuthenticationException();
         return (CustomerPrincipal) authentication.getPrincipal();
+    }
+
+    private boolean isPossibleCasting(Object principal) {
+        return principal.getClass().isAssignableFrom(CustomerPrincipal.class);
     }
 }

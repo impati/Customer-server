@@ -33,7 +33,7 @@ public class SignupTest {
     }
 
     @Test
-    @DisplayName("keycloak 오픈소스 회원 가입 페이지 테스트")
+    @DisplayName("[GET] [/signup] keycloak 오픈소스 회원 가입 페이지 테스트")
     public void keycloakSignupPage() throws Exception {
 
         //then
@@ -48,7 +48,7 @@ public class SignupTest {
     }
 
     //@Test  TODO : 다른 방법으로 테스트를 수행
-    @DisplayName("keycloak 오픈소스 회원 가입 테스트")
+    @DisplayName("[POST] [/signup] keycloak 오픈소스 회원 가입 테스트")
     public void keycloakSignup() throws Exception {
 
         mockMvc.perform(
