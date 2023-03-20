@@ -44,7 +44,7 @@ class CustomerControllerTest {
 
 
     @Test
-    @DisplayName("사용자 정보 응답 테스트")
+    @DisplayName("[POST] [/api/v1/customer] 사용자 정보 응답 테스트")
     public void customerTest() throws Exception {
 
         String clientId = clientSteps.clientRegisterWithDefaultStep();
@@ -66,6 +66,43 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.nickname").value(nickname))
                 .andExpect(jsonPath("$.email").value(email))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("[POST] [/api/v1/customer] 사용자 정보 요청 시 엑세스 토큰을 누락한 경우")
+    public void hasNoAccessTokenWhenRequestCustomer() throws Exception {
+
+        String clientId = clientSteps.clientRegisterWithDefaultStep();
+
+        mockMvc.perform(post("/api/v1/customer")
+                        .header("clientId", clientId)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codeName").value("C002"))
+                .andExpect(jsonPath("$.message").value("엑세스 토큰은 필수입니다."))
+                .andExpect(jsonPath("$.solution").value("엑세스 토큰을 담아서 요청합니다."))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("[POST] [/api/v1/customer] 사용자 정보 요청 시 엑세스 토큰이 유효하지 않은 경우")
+    public void invalidAccessTokenWhenRequestCustomer() throws Exception {
+
+        String clientId = clientSteps.clientRegisterWithDefaultStep();
+
+        String accessToken = makeAccessToken(1L, "username", "nickname", "email") + "noise";
+
+        mockMvc.perform(post("/api/v1/customer")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("clientId", clientId)
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.codeName").value("C003"))
+                .andExpect(jsonPath("$.message").value("엑세스 토큰이 유효하지 않습니다."))
+                .andExpect(jsonPath("$.solution").value("엑세스 토큰을 재발급 받아야합니다."))
+                .andDo(print());
+
     }
 
     private String makeAccessToken(Long id, String username, String nickname, String email) throws JsonProcessingException {
