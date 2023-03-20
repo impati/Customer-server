@@ -1,6 +1,7 @@
 package com.example.customerserver.service;
 
 import com.example.customerserver.domain.Client;
+import com.example.customerserver.exception.ClientValidException;
 import com.example.customerserver.repository.ClientRepository;
 import com.example.customerserver.web.request.ClientRedirectUrlRequest;
 import com.example.customerserver.web.request.ClientRequest;
@@ -24,7 +25,7 @@ public class ClientAdminister {
 
     public void editRedirectUrl(ClientRedirectUrlRequest request) {
         Client client = clientRepository.findClientByClientId(request.getClientId())
-                .orElseThrow(IllegalStateException::new);
+                .orElseThrow(ClientValidException::new);
         client.editRedirect(request.getRedirectUrl());
     }
 

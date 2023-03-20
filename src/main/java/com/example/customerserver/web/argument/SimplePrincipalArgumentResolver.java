@@ -1,5 +1,7 @@
 package com.example.customerserver.web.argument;
 
+import com.example.customerserver.exception.HasNoAccessTokenException;
+import com.example.customerserver.exception.InvalidAccessTokenException;
 import com.example.customerserver.web.data.SimplePrincipal;
 import com.example.customerserver.web.token.TokenGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +35,10 @@ public class SimplePrincipalArgumentResolver implements HandlerMethodArgumentRes
 
     private String validateToken(String bearerToken) {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
-            return bearerToken.replace(BEARER, "");
+            String accessToken = bearerToken.replace(BEARER, "");
+            if (!tokenGenerator.validateToken(accessToken)) throw new InvalidAccessTokenException();
+            return accessToken;
         }
-        throw new IllegalStateException();
+        throw new HasNoAccessTokenException();
     }
 }

@@ -26,12 +26,14 @@ public class SignupController {
 
     @PostMapping("/signup")
     public String signup(@Valid @ModelAttribute SignupRequest signupRequest, BindingResult bindingResult) {
-        signupRequest.validPassword();
+
+        if (!signupRequest.isSamePassword()) {
+            bindingResult.reject("", "확인 비밀번호와 일치하지 않습니다.");
+        }
         if (bindingResult.hasErrors()) {
             return "signup";
         }
         signupManager.signup(signupRequest);
         return "forward:/auth/login";
     }
-
 }
