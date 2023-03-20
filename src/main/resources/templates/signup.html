@@ -83,6 +83,9 @@
                             <small class="form-text text-muted pt-1"><i
                                     class="fas fa-info-circle me-2 text-primary"></i>비밀번호는 8자 이상이어야 하며, 숫자/대문자/소문자/특수문자를
                                 모두 포함해야 합니다.</small>
+                            <div th:if="${#fields.hasGlobalErrors()}">
+                                <small class="field-error" th:text="${#fields.globalErrors()}">전체 오류 메시지</small>
+                            </div>
                         </div>
                         <button class="btn btn-primary btn-user btn-block" type="submit">
                             Register Account
