@@ -36,6 +36,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   ```
   GET /auth/login
   HOST <Comming Soon>
+  clientId ${clientId}
   ```
     * 사전 조건 : client 등록
     * Response : 로그인 페이지를 응답
@@ -47,6 +48,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   ```
   GET /signup
   HOST <Comming Soon>
+  clientId ${clientId}
   ```
     * 사전 조건 : client 등록
     * Response : 회원가입 페이지를 응답
@@ -69,13 +71,14 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   ```
   POST /auth/gettoken
   HOST <Comming Soon>
-  Authorization: Bearer ${CODE}
+  clientId ${clientId}
+  Authorization: ${CODE}
   ```
     * 사전 조건 : 코드 발급
     * Response
 
       | Name | Type   | Description |
-          |--------|-------------|------------------------------|
+      |--------|-------------|------------------------------|
       | accessToken    | String | 엑세스 토큰      |
 
 ### 사용자 정보
@@ -85,13 +88,14 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   ```
   POST /api/v1/customer
   HOST <Comming Soon>
+  clientId ${clientId}
   Authorization: Bearer ${ACCESS_TOKEN}
     ```
     * 사전 조건 : 엑세스 토큰 발급
     * Response
 
       | Name             | Type    | Description     |
-          |------------------|-----------------|------------------------------|
+      |------------------|-----------------|------------------------------|
       | id               | Long    | 고유 식별 번호        |
       | username         | String  | username        |
       | nickname         | String  | 닉네임             |
@@ -112,7 +116,12 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   HOST <Comming Soon>
   ```
     * 사전 조건 : 없음
-    * Response : 없음
+    * Response
+    
+    
+      | Name | Type   | Description |
+      |--------|-------------|------------------------------|
+      | clientId    | String | 클라이언트 고유 문자열      |
 
 ## Customer Server Process
 
