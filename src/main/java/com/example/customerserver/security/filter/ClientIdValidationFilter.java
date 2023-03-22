@@ -4,8 +4,8 @@ import com.example.customerserver.domain.Client;
 import com.example.customerserver.exception.ClientValidException;
 import com.example.customerserver.repository.ClientRepository;
 import com.example.customerserver.security.handler.ClientValidationFailureHandler;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -18,23 +18,34 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class ClientIdValidationFilter extends OncePerRequestFilter {
 
-    private final static String CLIENT_VALID_HEADER_NAME = "clientId";
-    private final static String[] cookieNeedUri = {"/auth/login/**", "/sign/**"};
-    private final static String[] freePassUri = {"/auth/code/**", "/client/register/**", "/error/**"};
+    private final static String CLIENT_VALID_NAME = "clientId";
+    private final static String LOGIN_REQUEST_URI = "/auth/login/**";
+    private final static String SIGNUP_REQUEST_URI = "/signup/**";
+    private final static String REDIRECT_EDIT_REQUEST_URI = "/client/edit-redirect/**";
 
     private final ClientRepository clientRepository;
     private final ClientValidationFailureHandler clientValidationFailureHandler;
+    private final RequestMatcher requestMatcher;
+    private final RedirectStrategy redirectStrategy;
+
+    public ClientIdValidationFilter(ClientRepository clientRepository, ClientValidationFailureHandler clientValidationFailureHandler) {
+        this.clientRepository = clientRepository;
+        this.clientValidationFailureHandler = clientValidationFailureHandler;
+        this.requestMatcher = new OrRequestMatcher(
+                new AntPathRequestMatcher(LOGIN_REQUEST_URI), new AntPathRequestMatcher(SIGNUP_REQUEST_URI),
+                new AntPathRequestMatcher(REDIRECT_EDIT_REQUEST_URI)
+        );
+        this.redirectStrategy = new DefaultRedirectStrategy();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            ifRedirectRequest(request, response);
             validClient(request, response);
             filterChain.doFilter(request, response);
         } catch (ClientValidException e) {
@@ -42,31 +53,26 @@ public class ClientIdValidationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void validClient(HttpServletRequest request, HttpServletResponse response) {
-        if (isFreePass(request)) return;
-        String clientId = request.getHeader(CLIENT_VALID_HEADER_NAME);
-        Client client = clientRepository.findClientByClientId(clientId).orElseThrow(ClientValidException::new);
-        if (isNeedRedirect(request)) addRedirectInCookie(response, client.getRedirectUrl());
-    }
-
-    private boolean isFreePass(HttpServletRequest request) {
-        if (request.getRequestURI().equals("/signup") && request.getMethod().equals(HttpMethod.POST.name()))
-            return true;
-        RequestMatcher matcher = new OrRequestMatcher(getMatchers(freePassUri));
-        return matcher.matches(request);
-    }
-
-    private boolean isNeedRedirect(HttpServletRequest request) {
-        RequestMatcher matcher = new OrRequestMatcher(getMatchers(cookieNeedUri));
-        return matcher.matches(request);
-    }
-
-    private List<RequestMatcher> getMatchers(String[] matcherUri) {
-        List<RequestMatcher> requestMatchers = new ArrayList<>();
-        for (int i = 0; i < matcherUri.length; i++) {
-            requestMatchers.add(new AntPathRequestMatcher(matcherUri[i]));
+    private void ifRedirectRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (requestMatcher.matches(request) && request.getParameter(CLIENT_VALID_NAME) != null) {
+            String clientId = request.getParameter(CLIENT_VALID_NAME);
+            request.getSession().setAttribute(CLIENT_VALID_NAME, clientId);
+            redirectStrategy.sendRedirect(request, response, request.getRequestURI());
         }
-        return requestMatchers;
+    }
+
+    private void validClient(HttpServletRequest request, HttpServletResponse response) {
+        if (requestMatcher.matches(request)) {
+            String clientId = getClientIdFrom(request);
+            Client client = clientRepository.findClientByClientId(clientId).orElseThrow(ClientValidException::new);
+            addRedirectInCookie(response, client.getRedirectUrl());
+        }
+    }
+
+    private String getClientIdFrom(HttpServletRequest request) {
+        if (request.getHeader(CLIENT_VALID_NAME) != null)
+            return request.getHeader(CLIENT_VALID_NAME);
+        return String.valueOf(request.getSession().getAttribute(CLIENT_VALID_NAME));
     }
 
     private void addRedirectInCookie(HttpServletResponse response, String redirectUrl) {

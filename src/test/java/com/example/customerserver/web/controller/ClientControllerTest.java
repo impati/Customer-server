@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Client TEST")
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 class ClientControllerTest {
 
@@ -41,6 +42,8 @@ class ClientControllerTest {
     @DisplayName("[POST] [/client/register] Client 등록 테스트")
     public void registerClientTest() throws Exception {
 
+        long previous = clientRepository.count();
+
         mockMvc.perform(post("/client/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new ClientRequest("service-hub", "https://service-hub.org"))))
@@ -49,7 +52,7 @@ class ClientControllerTest {
                 .andDo(MockMvcResultHandlers.print());
 
         assertThat(clientRepository.count())
-                .isEqualTo(1);
+                .isEqualTo(previous + 1);
     }
 
     @Test

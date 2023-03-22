@@ -11,10 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SignupTest {
@@ -40,7 +42,11 @@ public class SignupTest {
         String clientId = clientSteps.clientRegisterWithDefaultStep();
 
         mockMvc.perform(get("/signup")
-                        .header("clientId", clientId))
+                        .param("clientId", clientId))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        mockMvc.perform(get("/signup")
+                        .sessionAttr("clientId", clientId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attributeExists("signupRequest"))
                 .andExpect(MockMvcResultMatchers.view().name("signup"))

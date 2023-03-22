@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 class CustomerControllerTest {
 
@@ -58,7 +60,6 @@ class CustomerControllerTest {
 
         mockMvc.perform(post("/api/v1/customer")
                         .header("Authorization", "Bearer " + accessToken)
-                        .header("clientId", clientId)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -75,7 +76,6 @@ class CustomerControllerTest {
         String clientId = clientSteps.clientRegisterWithDefaultStep();
 
         mockMvc.perform(post("/api/v1/customer")
-                        .header("clientId", clientId)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codeName").value("C002"))
@@ -95,7 +95,6 @@ class CustomerControllerTest {
 
         mockMvc.perform(post("/api/v1/customer")
                         .header("Authorization", "Bearer " + accessToken)
-                        .header("clientId", clientId)
                 )
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.codeName").value("C003"))

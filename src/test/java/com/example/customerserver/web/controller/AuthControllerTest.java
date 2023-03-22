@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("AuthController 테스트")
 @SpringBootTest
+@Transactional
 class AuthControllerTest {
 
     private MockMvc mockMvc;
@@ -81,7 +82,13 @@ class AuthControllerTest {
 
         //then
         mockMvc.perform(get("/auth/login")
-                        .header("clientId", clientId)
+                        .param("clientId", clientId)
+                )
+                .andExpect(status().is3xxRedirection())
+                .andDo(print());
+
+        mockMvc.perform(get("/auth/login")
+                        .sessionAttr("clientId", clientId)
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("signin"))
@@ -89,6 +96,7 @@ class AuthControllerTest {
                 .andDo(print());
 
     }
+
 
     @Test
     @DisplayName("[GET [/auth/code] code 와 함께 redirect 테스트")
@@ -127,8 +135,7 @@ class AuthControllerTest {
 
         //then
         mockMvc.perform(post("/auth/gettoken")
-                        .header("Authorization", code)
-                        .header("clientId", clientId))
+                        .header("Authorization", code))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andDo(print());
@@ -145,8 +152,7 @@ class AuthControllerTest {
 
         //then
         mockMvc.perform(post("/auth/gettoken")
-                        .header("Authorization", code)
-                        .header("clientId", clientId))
+                        .header("Authorization", code))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(AppConfig.getHost() + "/error/code"));
 
