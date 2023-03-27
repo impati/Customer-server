@@ -10,6 +10,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -54,7 +55,7 @@ public class ClientIdValidationFilter extends OncePerRequestFilter {
     }
 
     private void ifRedirectRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (requestMatcher.matches(request) && request.getParameter(CLIENT_VALID_NAME) != null) {
+        if (requestMatcher.matches(request) && StringUtils.hasText(request.getParameter(CLIENT_VALID_NAME))) {
             String clientId = request.getParameter(CLIENT_VALID_NAME);
             request.getSession().setAttribute(CLIENT_VALID_NAME, clientId);
             redirectStrategy.sendRedirect(request, response, request.getRequestURI());

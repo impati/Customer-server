@@ -1,7 +1,7 @@
 package com.example.customerserver.web.controller;
 
-import com.example.customerserver.service.ClientAdminister;
 import com.example.customerserver.service.ClientSteps;
+import com.example.customerserver.service.client.ClientAdminister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

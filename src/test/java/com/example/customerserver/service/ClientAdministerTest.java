@@ -2,6 +2,7 @@ package com.example.customerserver.service;
 
 import com.example.customerserver.domain.Client;
 import com.example.customerserver.repository.ClientRepository;
+import com.example.customerserver.service.client.ClientAdminister;
 import com.example.customerserver.web.request.ClientRedirectUrlRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -75,7 +75,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Response
 
       | Name | Type   | Description |
-      |--------|-------------|------------------------------|
+                        |--------|-------------|------------------------------|
       | accessToken    | String | 엑세스 토큰      |
 
 ### 사용자 정보
@@ -91,7 +91,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Response
 
       | Name             | Type    | Description     |
-      |------------------|-----------------|------------------------------|
+                        |------------------|-----------------|------------------------------|
       | id               | Long    | 고유 식별 번호        |
       | username         | String  | username        |
       | nickname         | String  | 닉네임             |
@@ -100,6 +100,23 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
       | roleType         | String  | ADMIN,USER      | 
       | blogUrl          | String  | 사용자 블로그         |
       | profileImageUrl  | String  | 사용자 프로필         |
+      | introduceComment | String  | 사용자 소개          |
+
+- 엑세스 토큰으로 사용자 정보를 수정할 수 있다.
+
+   ```
+  PATCH /api/v1/customer
+  HOST <Comming Soon>
+  Authorization: Bearer ${ACCESS_TOKEN}
+    ```
+    * 사전 조건 : 엑세스 토큰 발급
+    * Request
+
+      | Name             | Type    | Description     |
+                        |------------------|-----------------|------------------------------|
+      | nickname         | String  | 닉네임             |
+      | blogUrl          | String  | 사용자 블로그         |
+      | profileUrl  | String  | 사용자 프로필 URL         |
       | introduceComment | String  | 사용자 소개          |
 
 ### Client 등록
@@ -113,10 +130,9 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   ```
     * 사전 조건 : 없음
     * Response
-    
-    
+
       | Name | Type   | Description |
-      |--------|-------------|------------------------------|
+            |--------|-------------|------------------------------|
       | clientId    | String | 클라이언트 고유 문자열      |
 
 ## Customer Server Process
@@ -154,5 +170,3 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 | C003            | 유효하지 않은 엑세스 토큰을 으로 사용자 정보를 요청한 경우 | 클라이언트를 등록하여 ID를 발급 받아야합니다.        |
 | C004            | 인증되지 않은 상태에서 코드 발급을 요청한 경우        | 로그인을 진행합니다.                       |
 | C005            | 유효하지 않은 코드로  엑세스 토큰을 요청한 경우       | 로그인을 진행 한 후에 유효한 코드를 발급받습니다.      |
-
-
