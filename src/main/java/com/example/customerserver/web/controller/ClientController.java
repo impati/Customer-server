@@ -1,6 +1,6 @@
 package com.example.customerserver.web.controller;
 
-import com.example.customerserver.service.ClientAdminister;
+import com.example.customerserver.service.client.ClientAdminister;
 import com.example.customerserver.web.request.ClientRedirectUrlRequest;
 import com.example.customerserver.web.request.ClientRequest;
 import com.example.customerserver.web.response.ClientResponse;
