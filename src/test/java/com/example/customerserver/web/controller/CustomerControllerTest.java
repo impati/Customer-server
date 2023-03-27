@@ -1,8 +1,9 @@
 package com.example.customerserver.web.controller;
 
-import com.example.customerserver.service.ClientAdminister;
 import com.example.customerserver.service.ClientSteps;
+import com.example.customerserver.service.client.ClientAdminister;
 import com.example.customerserver.web.data.SimplePrincipal;
+import com.example.customerserver.web.request.CustomerEditRequest;
 import com.example.customerserver.web.token.AccessTokenGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,6 +101,23 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.codeName").value("C003"))
                 .andExpect(jsonPath("$.message").value("엑세스 토큰이 유효하지 않습니다."))
                 .andExpect(jsonPath("$.solution").value("엑세스 토큰을 재발급 받아야합니다."))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("[PATCH] [/api/v1/customer] 사용자 정보 수정 테스트")
+    public void customerEditTest() throws Exception {
+
+        String accessToken = makeAccessToken(1L, "username", "nickname", "email");
+
+        CustomerEditRequest customerEditRequest = new CustomerEditRequest();
+        customerEditRequest.setNickname("impti");
+        mockMvc.perform(post("/api/v1/customer")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(objectMapper.writeValueAsString(customerEditRequest))
+                )
+                .andExpect(status().isOk())
                 .andDo(print());
 
     }
