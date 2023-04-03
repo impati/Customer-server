@@ -65,7 +65,7 @@ class AuthControllerTest {
         redirectUrl = "https://service-hub.org";
         mockMvc = MockMvcBuilders
                 .standaloneSetup(authController, exceptionController)
-                .setCustomArgumentResolvers(new CodeArgumentResolver(codeGenerator), new AccessTokenArgumentResolver(codeGenerator, accessTokenGenerator, objectMapper))
+                .setCustomArgumentResolvers(new CodeArgumentResolver(codeGenerator), new AccessTokenArgumentResolver(accessTokenGenerator, objectMapper))
                 .setControllerAdvice(new CustomerExceptionHandler())
                 .addFilter(codeValidationFilter)
                 .addFilter(clientIdValidationFilter)

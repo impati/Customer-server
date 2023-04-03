@@ -120,8 +120,4 @@ public class CustomerPrincipal implements OAuth2User, UserDetails {
     public String getEmail() {
         return email;
     }
-
-    public void editNickname(String nickname) {
-        this.nickname = nickname;
-    }
 }

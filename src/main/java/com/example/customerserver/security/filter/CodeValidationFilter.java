@@ -27,8 +27,8 @@ public class CodeValidationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION = "Authorization";
     private final CustomerRepository customerRepository;
     private final CodeGenerator codeProvider;
-    private final RequestMatcher requestMatcher;
     private final CodeValidationFailureHandler codeValidationFailureHandler;
+    private final RequestMatcher requestMatcher;
 
     public CodeValidationFilter(CustomerRepository customerRepository, CodeGenerator codeProvider, CodeValidationFailureHandler codeValidationFailureHandler) {
         this.customerRepository = customerRepository;
@@ -39,14 +39,12 @@ public class CodeValidationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         try {
             validCodeAndSetAuthentication(request);
             filterChain.doFilter(request, response);
         } catch (InvalidCodeException e) {
             codeValidationFailureHandler.onClientValidFailure(request, response);
         }
-
     }
 
     private void validCodeAndSetAuthentication(HttpServletRequest request) {

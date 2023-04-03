@@ -29,10 +29,8 @@ public class AccessTokenGenerator implements TokenGenerator {
 
     @Override
     public String createToken(String principal) {
-
         long now = new Date().getTime();
         Date validity = new Date(now + this.tokenValidityInSeconds);
-
         return Jwts.builder()
                 .setSubject(principal)
                 .signWith(key, SignatureAlgorithm.HS512)

@@ -25,12 +25,12 @@ public class CodeArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        CustomerPrincipal customerPrincipal = currentPrincipal();
+        CustomerPrincipal customerPrincipal = getPrincipal();
         String code = codeGenerator.createToken(String.valueOf(customerPrincipal.getId()));
         return new CodeRequest(code);
     }
 
-    private CustomerPrincipal currentPrincipal() {
+    private CustomerPrincipal getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) throw new UnAuthenticationException();
         if (!isPossibleCasting(authentication.getPrincipal())) throw new UnAuthenticationException();
