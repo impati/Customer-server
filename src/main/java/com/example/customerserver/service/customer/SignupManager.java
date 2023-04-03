@@ -1,4 +1,4 @@
-package com.example.customerserver.web;
+package com.example.customerserver.service.customer;
 
 import com.example.customerserver.web.request.SignupRequest;
 import lombok.Data;

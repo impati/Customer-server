@@ -4,7 +4,7 @@ import com.example.customerserver.security.CustomerPrincipal;
 import com.example.customerserver.web.data.SimplePrincipal;
 import com.example.customerserver.web.response.TokenResponse;
 import com.example.customerserver.web.token.AccessTokenGenerator;
-import com.example.customerserver.web.token.CodeGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -17,7 +17,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class AccessTokenArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final CodeGenerator codeGenerator;
     private final AccessTokenGenerator accessTokenGenerator;
     private final ObjectMapper objectMapper;
 
@@ -28,11 +27,18 @@ public class AccessTokenArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-
-        CustomerPrincipal customerPrincipal = (CustomerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String accessToken = accessTokenGenerator.createToken(objectMapper.writeValueAsString(SimplePrincipal.from(customerPrincipal)));
-
+        String accessToken = accessTokenGenerator.createToken(getStringPrincipal());
         return new TokenResponse(accessToken);
+    }
+
+    private String getStringPrincipal() throws JsonProcessingException {
+        return objectMapper.writeValueAsString(SimplePrincipal.from(getPrincipal()));
+    }
+
+    private CustomerPrincipal getPrincipal() {
+        return (CustomerPrincipal) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

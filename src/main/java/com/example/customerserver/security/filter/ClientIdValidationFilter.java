@@ -30,17 +30,18 @@ public class ClientIdValidationFilter extends OncePerRequestFilter {
 
     private final ClientRepository clientRepository;
     private final ClientValidationFailureHandler clientValidationFailureHandler;
-    private final RequestMatcher requestMatcher;
     private final RedirectStrategy redirectStrategy;
+    private final RequestMatcher requestMatcher;
 
     public ClientIdValidationFilter(ClientRepository clientRepository, ClientValidationFailureHandler clientValidationFailureHandler) {
         this.clientRepository = clientRepository;
         this.clientValidationFailureHandler = clientValidationFailureHandler;
+        this.redirectStrategy = new DefaultRedirectStrategy();
         this.requestMatcher = new OrRequestMatcher(
-                new AntPathRequestMatcher(LOGIN_REQUEST_URI), new AntPathRequestMatcher(SIGNUP_REQUEST_URI),
+                new AntPathRequestMatcher(LOGIN_REQUEST_URI),
+                new AntPathRequestMatcher(SIGNUP_REQUEST_URI),
                 new AntPathRequestMatcher(REDIRECT_EDIT_REQUEST_URI)
         );
-        this.redirectStrategy = new DefaultRedirectStrategy();
     }
 
     @Override

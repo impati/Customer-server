@@ -6,6 +6,7 @@ import com.example.customerserver.security.filter.CodeValidationFilter;
 import com.example.customerserver.security.filter.KeycloakLoginFilter;
 import com.example.customerserver.security.handler.KeycloakLoginFailureHandler;
 import com.example.customerserver.security.oauth2.OAuth2CustomerService;
+import com.example.customerserver.service.customer.SignupManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -88,7 +89,6 @@ public class SecurityConfig {
                         .authorizationCode()
                         .clientCredentials()
                         .password(passwordGrantBuilder -> passwordGrantBuilder.clockSkew(Duration.ofSeconds(3600)))
-                        .refreshToken(refreshTokenGrantBuilder -> refreshTokenGrantBuilder.clockSkew(Duration.ofSeconds(3600)))
                         .build();
 
         DefaultOAuth2AuthorizedClientManager authorizedClientManager =
@@ -114,6 +114,11 @@ public class SecurityConfig {
             }
             return contextAttributes;
         };
+    }
+
+    @Bean
+    public SignupManager signupManager() {
+        return new SignupManager();
     }
 
 }

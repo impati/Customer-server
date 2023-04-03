@@ -1,6 +1,6 @@
 package com.example.customerserver.web.controller;
 
-import com.example.customerserver.web.SignupManager;
+import com.example.customerserver.service.customer.SignupManager;
 import com.example.customerserver.web.request.SignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

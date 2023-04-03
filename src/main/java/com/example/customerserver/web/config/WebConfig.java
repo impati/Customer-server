@@ -1,7 +1,6 @@
 package com.example.customerserver.web.config;
 
 import com.example.customerserver.repository.CustomerRepository;
-import com.example.customerserver.web.SignupManager;
 import com.example.customerserver.web.argument.AccessTokenArgumentResolver;
 import com.example.customerserver.web.argument.CodeArgumentResolver;
 import com.example.customerserver.web.argument.SimplePrincipalArgumentResolver;
@@ -29,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new CodeArgumentResolver(codeGenerator));
-        resolvers.add(new AccessTokenArgumentResolver(codeGenerator, accessTokenGenerator, objectMapper));
+        resolvers.add(new AccessTokenArgumentResolver(accessTokenGenerator, objectMapper));
         resolvers.add(new SimplePrincipalArgumentResolver(accessTokenGenerator, objectMapper));
 
     }
@@ -37,10 +36,5 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public KeyCloakUniqueValidator keycloakUsernameUniqueValidator() {
         return new KeyCloakUniqueValidator(customerRepository);
-    }
-
-    @Bean
-    public SignupManager signupManager() {
-        return new SignupManager();
     }
 }

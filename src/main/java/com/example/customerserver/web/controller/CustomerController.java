@@ -18,7 +18,6 @@ public class CustomerController {
         return simplePrincipal;
     }
 
-
     @PatchMapping("/v1/customer")
     public void editCustomer(SimplePrincipal simplePrincipal, @RequestBody CustomerEditRequest customerEditRequest) {
         customerEditor.edit(simplePrincipal.id(), customerEditRequest);
