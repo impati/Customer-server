@@ -129,6 +129,11 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
   HOST impati-customer.com
   ```
     * 사전 조건 : 없음
+    * Request
+      | Name | Type   | Description |
+      |--------|-------------|------------------------------|
+      | clientName    | String | 클라이언트 이름     |
+      | redirectUrl    | String | 리다이렉트 URL     |
     * Response
 
       | Name | Type   | Description |
