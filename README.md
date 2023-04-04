@@ -35,7 +35,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
   ```
   GET /auth/login?clientId=${clientId}
-  HOST <Comming Soon>
+  HOST impati-customer.com
   ```
     * 사전 조건 : client 등록
     * Response : 로그인 페이지를 응답
@@ -46,7 +46,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 - 회원가입 기능을 사용하고자한다면 클라이언트를 customer-server 에 등록하고 /auth/signup 으로 회원가입을 요청한다
   ```
   GET /signup?clientId=${clientId}
-  HOST <Comming Soon>
+  HOST impati-customer.com
   ```
     * 사전 조건 : client 등록
     * Response : 회원가입 페이지를 응답
@@ -57,7 +57,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
   ```
   GET /auth/code
-  HOST <Comming Soon>
+  HOST impati-customer.com
   ```
     * 사전 조건 : 로그인
     * Response : redirectUrl?code=${CODE}
@@ -68,7 +68,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
   ```
   POST /auth/gettoken
-  HOST <Comming Soon>
+  HOST impati-customer.com
   Authorization: ${CODE}
   ```
     * 사전 조건 : 코드 발급
@@ -84,7 +84,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
   ```
   POST /api/v1/customer
-  HOST <Comming Soon>
+  HOST impati-customer.com
   Authorization: Bearer ${ACCESS_TOKEN}
     ```
     * 사전 조건 : 엑세스 토큰 발급
@@ -106,7 +106,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
    ```
   PATCH /api/v1/customer
-  HOST <Comming Soon>
+  HOST impati-customer.com
   Authorization: Bearer ${ACCESS_TOKEN}
     ```
     * 사전 조건 : 엑세스 토큰 발급
@@ -126,7 +126,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 
   ```
   POST /client/register
-  HOST <Comming Soon>
+  HOST impati-customer.com
   ```
     * 사전 조건 : 없음
     * Response
