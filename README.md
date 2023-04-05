@@ -75,7 +75,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Response
 
       | Name | Type   | Description |
-      |--------|-------------|------------------------------|
+                        |--------|-------------|------------------------------|
       | accessToken    | String | 엑세스 토큰      |
 
 ### 사용자 정보
@@ -91,7 +91,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Response
 
       | Name             | Type    | Description     |
-      |------------------|-----------------|------------------------------|
+                        |------------------|-----------------|------------------------------|
       | id               | Long    | 고유 식별 번호        |
       | username         | String  | username        |
       | nickname         | String  | 닉네임             |
@@ -113,7 +113,7 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Request
 
       | Name             | Type    | Description     |
-      |------------------|-----------------|------------------------------|
+                        |------------------|-----------------|------------------------------|
       | nickname         | String  | 닉네임             |
       | blogUrl          | String  | 사용자 블로그         |
       | profileUrl  | String  | 사용자 프로필 URL         |
@@ -137,18 +137,33 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
     * Response
 
       | Name | Type   | Description |
-      |--------|-------------|------------------------------|
+                        |--------|-------------|------------------------------|
       | clientId    | String | 클라이언트 고유 문자열      |
 
 ## Customer Server Process
 
 ---
-<img src="docs/seq.png" width="700">
 
-1. client-server 는 customer-server 에 로그인을 위임한다
-2. customer-server 는 로그인에 성공한 사용자에 대해 코드를 발급하고 응답한다.
-3. client-server 는 코드로 customer-server 로부터 엑세스 토큰을 발급받는다.
-4. 발급 받은 엑세스 토큰으로 client-server 는 customer-server 로부터 사용자 정보를 가져온다.
+## 클라이언트 등록
+
+<img src="docs/client-register.png" width="561">
+
+## 로그인과 코드 발급
+
+<img src="docs/login-code.png" width="561">
+
+## 회원가입
+
+<img src="docs/signup.png" width="561">
+
+## 엑세스 토큰 발급
+
+<img src="docs/accesstoken.png" width="561">
+
+## 사용자 정보
+
+<img src="docs/customer-info.png" width="561">
+
 
 ---
 
