@@ -191,3 +191,97 @@ SSO를 이용하면서 사용자 정보 또한 한곳에서 관리하는 서버�
 | C003            | 유효하지 않은 엑세스 토큰을 으로 사용자 정보를 요청한 경우 | 클라이언트를 등록하여 ID를 발급 받아야합니다.        |
 | C004            | 인증되지 않은 상태에서 코드 발급을 요청한 경우        | 로그인을 진행합니다.                       |
 | C005            | 유효하지 않은 코드로  엑세스 토큰을 요청한 경우       | 로그인을 진행 한 후에 유효한 코드를 발급받습니다.      |
+
+
+## application.yml
+
+```yaml
+server:
+  port: 9090
+
+spring:
+  config:
+    activate:
+      on-profile: ${PROFILE}
+  datasource:
+    url: jdbc:mysql://${HOST}:${PORT}/${database}
+    username: ${USERNAME}
+    password: ${PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_SECRET}
+            client-name: ${KEYCLOAK_CLIENT_NAME}
+            redirect-uri: ${KEYCLOAK_REDIRECTURL}
+            authorization-grant-type: password
+            scope: email,profile
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_SECRET}
+            client-name: ${GOOGLE_CLIENT_NAME}
+            redirect-uri: ${GOOGLE_REDIRECTURL}
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+            scope: email,profile
+          naver:
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_SECRET}
+            client-name: ${NAVER_CLIENT_NAME}
+            redirect-uri: ${NAVER_REDIRECTURL}
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+            scope: email,profile
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_SECRET}
+            client-name: ${KAKAO_CLIENT_NAME}
+            redirect-uri: ${KAKAO_REDIRECTURL}
+            authorization-grant-type: authorization_code
+            client-authentication-method: post
+            scope: profile_nickname ,account_email
+
+        provider:
+          keycloak:
+            authorization-uri: ${KEYCLOAK_HOST}/realms/myrealm/protocol/openid-connect/auth
+            token-uri: ${KEYCLOAK_HOST}/realms/myrealm/protocol/openid-connect/token
+            issuer-uri: ${KEYCLOAK_HOST}/realms/myrealm
+            user-info-uri: ${KEYCLOAK_HOST}/realms/myrealm/protocol/openid-connect/userinfo
+            jwk-set-uri: ${KEYCLOAK_HOST}/realms/myrealm/protocol/openid-connect/certs
+            user-name-attribute: preferred_username # keycloak 용
+          naver:
+            authorizationUri: https://nid.naver.com/oauth2.0/authorize
+            tokenUri: https://nid.naver.com/oauth2.0/token
+            userInfoUri: https://openapi.naver.com/v1/nid/me
+            userNameAttribute: response
+          kakao:
+            issuer-uri: https://kauth.kakao.com
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+keycloak:
+  create:
+    user: ${KEYCLOAK_POST_USER_ENDPOINT}
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  code: ${JWT_CODE}
+
+profile:
+  dir: ${PROFILE_DIT}
+
+app:
+  auth:
+    tokenSecret: ${TOKEN_SECRET}
+    tokenExpiry: 1800000
+    refreshTokenExpiry: 604800000
+    codeExpiry: 1800
+```
