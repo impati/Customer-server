@@ -1,14 +1,16 @@
 package com.example.customerserver.service.client;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.customerserver.domain.Client;
 import com.example.customerserver.exception.ClientValidException;
 import com.example.customerserver.repository.ClientRepository;
 import com.example.customerserver.web.request.ClientRedirectUrlRequest;
 import com.example.customerserver.web.request.ClientRequest;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -16,17 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ClientAdminister {
 
-    private final ClientRepository clientRepository;
+	private final ClientRepository clientRepository;
 
-    public String registerClient(ClientRequest clientRequest) {
-        Client client = clientRepository.save(clientRequest.toEntity());
-        return client.getClientId();
-    }
+	public String registerClient(final ClientRequest clientRequest) {
+		final Client client = clientRepository.save(clientRequest.toEntity());
+		return client.getClientId();
+	}
 
-    public void editRedirectUrl(ClientRedirectUrlRequest request) {
-        Client client = clientRepository.findClientByClientId(request.getClientId())
-                .orElseThrow(ClientValidException::new);
-        client.editRedirect(request.getRedirectUrl());
-    }
-
+	public void editRedirectUrl(final ClientRedirectUrlRequest request) {
+		final Client client = clientRepository.findClientByClientId(request.getClientId())
+			.orElseThrow(ClientValidException::new);
+		client.editRedirect(request.getRedirectUrl());
+	}
 }

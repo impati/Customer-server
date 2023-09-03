@@ -1,14 +1,16 @@
 package com.example.customerserver.repository;
 
-import com.example.customerserver.domain.Customer;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.customerserver.domain.Customer;
+
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    Optional<Customer> findByUserId(String userId);
 
-    boolean existsCustomerByUsername(String username);
+    Optional<Customer> findByUserId(final String userId);
 
-    boolean existsCustomerByEmail(String email);
+    boolean existsCustomerByUsername(final String username);
+
+    boolean existsCustomerByEmail(final String email);
 }

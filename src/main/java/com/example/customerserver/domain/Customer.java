@@ -1,11 +1,24 @@
 package com.example.customerserver.domain;
 
-import com.sun.istack.NotNull;
-import lombok.*;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import org.springframework.util.StringUtils;
 
-import javax.persistence.*;
-import java.util.Objects;
+import com.sun.istack.NotNull;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -13,67 +26,97 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "customer_id")
+	private Long id;
 
-    @Column(name = "sub", unique = true)
-    @NotNull
-    private String userId;
+	@Column(name = "sub", unique = true)
+	@NotNull
+	private String userId;
 
-    @Column(unique = true, nullable = false)
-    private String nickname;
+	@Column(name = "nickname", unique = true, nullable = false)
+	private String nickname;
 
-    @Column(nullable = false)
-    private String username;
+	@Column(name = "username", nullable = false)
+	private String username;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+	@Column(name = "email", unique = true, nullable = false)
+	private String email;
 
-    @Enumerated(value = EnumType.STRING)
-    private RoleType roleType;
+	@Column(name = "role_type")
+	@Enumerated(value = EnumType.STRING)
+	private RoleType roleType;
 
-    @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+	@Column(name = "provider_type")
+	@Enumerated(EnumType.STRING)
+	private ProviderType providerType;
 
-    private String blogUrl;
+	@Column(name = "blog_url")
+	private String blogUrl;
 
-    private String profileImageUrl;
+	@Column(name = "profile_image_url")
+	private String profileImageUrl;
 
-    @Column(length = 1000)
-    private String introduceComment;
+	@Column(name = "introduce_comment", length = 1000)
+	private String introduceComment;
 
-    @Builder
-    private Customer(String userId, String nickname, String username, String email, String role, ProviderType providerType, String blogUrl, String profileImageUrl) {
-        this.userId = userId;
-        this.nickname = nickname;
-        this.username = username;
-        this.email = email;
-        this.roleType = RoleType.of(role);
-        this.providerType = providerType;
-        this.introduceComment = nickname + "님을 소개해주세요";
-        this.profileImageUrl = profileImageUrl;
-        this.blogUrl = blogUrl;
-    }
+	@Builder
+	private Customer(
+		final String userId,
+		final String nickname,
+		final String username,
+		final String email,
+		final String role,
+		final ProviderType providerType,
+		final String blogUrl,
+		final String profileImageUrl
+	) {
+		this.userId = userId;
+		this.nickname = nickname;
+		this.username = username;
+		this.email = email;
+		this.roleType = RoleType.of(role);
+		this.providerType = providerType;
+		this.introduceComment = nickname + "님을 소개해주세요";
+		this.profileImageUrl = profileImageUrl;
+		this.blogUrl = blogUrl;
+	}
 
-    public void update(String nickname, String introduceComment, String bolgUrl, String profileImageUrl) {
-        if (StringUtils.hasText(nickname)) this.nickname = nickname;
-        if (StringUtils.hasText(introduceComment)) this.introduceComment = introduceComment;
-        if (StringUtils.hasText(bolgUrl)) this.blogUrl = bolgUrl;
-        if (StringUtils.hasText(profileImageUrl)) this.profileImageUrl = profileImageUrl;
-    }
+	public void update(
+		final String nickname,
+		final String introduceComment,
+		final String bolgUrl,
+		final String profileImageUrl
+	) {
+		if (StringUtils.hasText(nickname)) {
+			this.nickname = nickname;
+		}
+		if (StringUtils.hasText(introduceComment)) {
+			this.introduceComment = introduceComment;
+		}
+		if (StringUtils.hasText(bolgUrl)) {
+			this.blogUrl = bolgUrl;
+		}
+		if (StringUtils.hasText(profileImageUrl)) {
+			this.profileImageUrl = profileImageUrl;
+		}
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Customer customer)) return false;
-        return this.getId() != null && Objects.equals(id, customer.id);
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Customer customer)) {
+			return false;
+		}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+		return this.getId() != null && Objects.equals(id, customer.id);
+	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

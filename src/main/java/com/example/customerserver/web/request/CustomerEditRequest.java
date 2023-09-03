@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class CustomerEditRequest {
-    private String nickname;
-    private String blogUrl;
-    private String profileUrl;
-    private String introduceComment;
+
+	private String nickname;
+	private String blogUrl;
+	private String profileUrl;
+	private String introduceComment;
 }
