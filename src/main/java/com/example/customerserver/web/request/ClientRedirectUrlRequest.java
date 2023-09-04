@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientRedirectUrlRequest {
-    private String clientId;
-    private String redirectUrl;
+
+	private String clientId;
+	private String redirectUrl;
 }

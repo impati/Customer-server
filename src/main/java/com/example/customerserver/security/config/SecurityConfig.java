@@ -1,13 +1,13 @@
 package com.example.customerserver.security.config;
 
-import com.example.customerserver.repository.CustomerRepository;
-import com.example.customerserver.security.filter.ClientIdValidationFilter;
-import com.example.customerserver.security.filter.CodeValidationFilter;
-import com.example.customerserver.security.filter.KeycloakLoginFilter;
-import com.example.customerserver.security.handler.KeycloakLoginFailureHandler;
-import com.example.customerserver.security.oauth2.OAuth2CustomerService;
-import com.example.customerserver.service.customer.SignupManager;
-import lombok.RequiredArgsConstructor;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,101 +24,107 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import com.example.customerserver.repository.CustomerRepository;
+import com.example.customerserver.security.filter.ClientIdValidationFilter;
+import com.example.customerserver.security.filter.CodeValidationFilter;
+import com.example.customerserver.security.filter.KeycloakLoginFilter;
+import com.example.customerserver.security.handler.KeycloakLoginFailureHandler;
+import com.example.customerserver.security.oauth2.OAuth2CustomerService;
+import com.example.customerserver.service.customer.SignupManager;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
-    private final OAuth2AuthorizedClientRepository authorizedClientRepository;
-    private final CustomerRepository customerRepository;
-    private final CodeValidationFilter codeValidationFilter;
-    private final ClientIdValidationFilter clientIdValidationFilter;
+	private final ClientRegistrationRepository clientRegistrationRepository;
+	private final OAuth2AuthorizedClientRepository authorizedClientRepository;
+	private final CustomerRepository customerRepository;
+	private final CodeValidationFilter codeValidationFilter;
+	private final ClientIdValidationFilter clientIdValidationFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	@Bean
+	public SecurityFilterChain securityFilterChain(final HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.csrf().disable();
+		httpSecurity.csrf().disable();
 
-        httpSecurity.anonymous();
+		httpSecurity.anonymous();
 
-        httpSecurity.authorizeHttpRequests()
-                .anyRequest().permitAll();
+		httpSecurity.authorizeHttpRequests()
+			.anyRequest().permitAll();
 
-        httpSecurity.addFilterAt(codeValidationFilter, AnonymousAuthenticationFilter.class);
-        httpSecurity.addFilterAfter(keycloakLoginFilter(), AnonymousAuthenticationFilter.class);
-        httpSecurity.addFilterBefore(clientIdValidationFilter, AnonymousAuthenticationFilter.class);
+		httpSecurity.addFilterAt(codeValidationFilter, AnonymousAuthenticationFilter.class);
+		httpSecurity.addFilterAfter(keycloakLoginFilter(), AnonymousAuthenticationFilter.class);
+		httpSecurity.addFilterBefore(clientIdValidationFilter, AnonymousAuthenticationFilter.class);
 
-        httpSecurity
-                .oauth2Login()
-                .defaultSuccessUrl("/auth/code")
-                .loginPage("/login")
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService());
+		httpSecurity
+			.oauth2Login()
+			.defaultSuccessUrl("/auth/code")
+			.loginPage("/login")
+			.userInfoEndpoint()
+			.userService(customOAuth2UserService());
 
-        return httpSecurity.build();
-    }
+		return httpSecurity.build();
+	}
 
-    public KeycloakLoginFilter keycloakLoginFilter() {
-        KeycloakLoginFilter keycloakLoginFilter = new KeycloakLoginFilter(authorizedClientManager(), customOAuth2UserService());
-        keycloakLoginFilter.setAuthenticationFailureHandler(keycloakLoginFailureHandler());
-        keycloakLoginFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/auth/code"));
-        return keycloakLoginFilter;
-    }
+	public KeycloakLoginFilter keycloakLoginFilter() {
+		final KeycloakLoginFilter keycloakLoginFilter = new KeycloakLoginFilter(
+			authorizedClientManager(),
+			customOAuth2UserService()
+		);
 
-    public KeycloakLoginFailureHandler keycloakLoginFailureHandler() {
-        return new KeycloakLoginFailureHandler();
-    }
+		keycloakLoginFilter.setAuthenticationFailureHandler(keycloakLoginFailureHandler());
+		keycloakLoginFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/auth/code"));
+		return keycloakLoginFilter;
+	}
 
-    @Bean
-    public OAuth2CustomerService customOAuth2UserService() {
-        return new OAuth2CustomerService(customerRepository);
-    }
+	public KeycloakLoginFailureHandler keycloakLoginFailureHandler() {
+		return new KeycloakLoginFailureHandler();
+	}
 
-    @Bean
-    public DefaultOAuth2AuthorizedClientManager authorizedClientManager() {
+	@Bean
+	public OAuth2CustomerService customOAuth2UserService() {
+		return new OAuth2CustomerService(customerRepository);
+	}
 
-        OAuth2AuthorizedClientProvider authorizedClientProvider =
-                OAuth2AuthorizedClientProviderBuilder.builder()
-                        .authorizationCode()
-                        .clientCredentials()
-                        .password(passwordGrantBuilder -> passwordGrantBuilder.clockSkew(Duration.ofSeconds(3600)))
-                        .build();
+	@Bean
+	public DefaultOAuth2AuthorizedClientManager authorizedClientManager() {
 
-        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
-                new DefaultOAuth2AuthorizedClientManager(
-                        clientRegistrationRepository, authorizedClientRepository);
+		final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
+			.authorizationCode()
+			.clientCredentials()
+			.password(passwordGrantBuilder -> passwordGrantBuilder.clockSkew(Duration.ofSeconds(3600)))
+			.build();
 
-        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-        authorizedClientManager.setContextAttributesMapper(contextAttributesMapper());
+		final DefaultOAuth2AuthorizedClientManager authorizedClientManager = new DefaultOAuth2AuthorizedClientManager(
+			clientRegistrationRepository,
+			authorizedClientRepository
+		);
 
-        return authorizedClientManager;
-    }
+		authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+		authorizedClientManager.setContextAttributesMapper(contextAttributesMapper());
 
-    private Function<OAuth2AuthorizeRequest, Map<String, Object>> contextAttributesMapper() {
-        return authorizeRequest -> {
-            Map<String, Object> contextAttributes = Collections.emptyMap();
-            HttpServletRequest servletRequest = authorizeRequest.getAttribute(HttpServletRequest.class.getName());
-            String username = servletRequest.getParameter(OAuth2ParameterNames.USERNAME);
-            String password = servletRequest.getParameter(OAuth2ParameterNames.PASSWORD);
-            if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
-                contextAttributes = new HashMap<>();
-                contextAttributes.put(OAuth2AuthorizationContext.USERNAME_ATTRIBUTE_NAME, username);
-                contextAttributes.put(OAuth2AuthorizationContext.PASSWORD_ATTRIBUTE_NAME, password);
-            }
-            return contextAttributes;
-        };
-    }
+		return authorizedClientManager;
+	}
 
-    @Bean
-    public SignupManager signupManager() {
-        return new SignupManager();
-    }
+	private Function<OAuth2AuthorizeRequest, Map<String, Object>> contextAttributesMapper() {
+		return authorizeRequest -> {
+			Map<String, Object> contextAttributes = Collections.emptyMap();
+			HttpServletRequest servletRequest = authorizeRequest.getAttribute(HttpServletRequest.class.getName());
+			String username = servletRequest.getParameter(OAuth2ParameterNames.USERNAME);
+			String password = servletRequest.getParameter(OAuth2ParameterNames.PASSWORD);
+			if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
+				contextAttributes = new HashMap<>();
+				contextAttributes.put(OAuth2AuthorizationContext.USERNAME_ATTRIBUTE_NAME, username);
+				contextAttributes.put(OAuth2AuthorizationContext.PASSWORD_ATTRIBUTE_NAME, password);
+			}
+			return contextAttributes;
+		};
+	}
 
+	@Bean
+	public SignupManager signupManager() {
+		return new SignupManager();
+	}
 }

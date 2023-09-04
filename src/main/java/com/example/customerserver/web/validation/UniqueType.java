@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum UniqueType {
+
     USERNAME("username"), EMAIL("email");
 
     private final String name;
